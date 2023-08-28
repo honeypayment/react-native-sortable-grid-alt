@@ -11,7 +11,7 @@ import {
 import _ from 'lodash'
 
 // Default values
-const ITEMS_PER_ROW                   = 4
+const ITEMS_PER_ROW                   = 2
 const DRAG_ACTIVATION_TRESHOLD        = 200 // Milliseconds
 const BLOCK_TRANSITION_DURATION       = 300 // Milliseconds
 const ACTIVE_BLOCK_CENTERING_DURATION = 200 // Milliseconds
@@ -280,15 +280,28 @@ class SortableGrid extends Component {
   }
 
   assessGridSize = ({nativeEvent}) => {
-    console.log("Calculating grid size");
+    // console.log("Calculating grid size");
     if (this.props.itemWidth && this.props.itemWidth < nativeEvent.layout.width) {
       this.itemsPerRow = Math.floor(nativeEvent.layout.width / this.props.itemWidth)
       this.blockWidth = nativeEvent.layout.width / this.itemsPerRow
       this.blockHeight = this.props.itemHeight || this.blockWidth
     }
     else {
-      this.blockWidth = nativeEvent.layout.width / this.itemsPerRow
-      this.blockHeight = this.blockWidth
+
+      // if (this.itemsPerRow>1){
+        this.blockWidth = nativeEvent.layout.width / this.itemsPerRow
+      // }else{
+      //   this.blockWidth = 180
+      // }
+
+      // this.blockHeight = this.blockWidth
+      if(this.props.blockHeight>0){
+        this.blockHeight = this.props.blockHeight
+      }
+      if(this.props.blockWidth>0){
+        this.blockWidth = this.props.blockWidth
+      }
+
     }
     if (this.state.gridLayout != nativeEvent.layout) {
       this.setState({
@@ -572,7 +585,8 @@ class SortableGrid extends Component {
     ) / 50
 
   _getBlockStyle = (key) => [
-    { width: this.state.blockWidth,
+    {
+      width: this.state.blockWidth,
       height: this.state.blockHeight,
       justifyContent: 'center' },
     this._blockPositionsSet() && (this.initialDragDone || this.state.deleteModeOn) &&
